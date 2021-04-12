@@ -15,12 +15,12 @@ from utils.metrics import Evaluator
 from auto_deeplab import AutoDeeplab
 from config_utils.search_args import obtain_search_args
 from utils.copy_state_dict import copy_state_dict
-import apex
-try:
-    from apex import amp
-    APEX_AVAILABLE = True
-except ModuleNotFoundError:
-    APEX_AVAILABLE = False
+# import apex
+# try:
+#     from apex import amp
+#     APEX_AVAILABLE = True
+# except ModuleNotFoundError:
+#     APEX_AVAILABLE = False
 
 
 print('working with pytorch version {}'.format(torch.__version__))
@@ -40,7 +40,7 @@ class Trainer(object):
         # Define Tensorboard Summary
         self.summary = TensorboardSummary(self.saver.experiment_dir)
         self.writer = self.summary.create_summary()
-        self.use_amp = True if (APEX_AVAILABLE and args.use_amp) else False
+        # self.use_amp = True if (APEX_AVAILABLE and args.use_amp) else False
         self.opt_level = args.opt_level
 
         kwargs = {'num_workers': args.workers, 'pin_memory': True, 'drop_last':True}
@@ -87,29 +87,29 @@ class Trainer(object):
 
 
         # mixed precision
-        if self.use_amp and args.cuda:
-            keep_batchnorm_fp32 = True if (self.opt_level == 'O2' or self.opt_level == 'O3') else None
-
-            # fix for current pytorch version with opt_level 'O1'
-            if self.opt_level == 'O1' and torch.__version__ < '1.3':
-                for module in self.model.modules():
-                    if isinstance(module, torch.nn.modules.batchnorm._BatchNorm):
-                        # Hack to fix BN fprop without affine transformation
-                        if module.weight is None:
-                            module.weight = torch.nn.Parameter(
-                                torch.ones(module.running_var.shape, dtype=module.running_var.dtype,
-                                           device=module.running_var.device), requires_grad=False)
-                        if module.bias is None:
-                            module.bias = torch.nn.Parameter(
-                                torch.zeros(module.running_var.shape, dtype=module.running_var.dtype,
-                                            device=module.running_var.device), requires_grad=False)
-
-            # print(keep_batchnorm_fp32)
-            self.model, [self.optimizer, self.architect_optimizer] = amp.initialize(
-                self.model, [self.optimizer, self.architect_optimizer], opt_level=self.opt_level,
-                keep_batchnorm_fp32=keep_batchnorm_fp32, loss_scale="dynamic")
-
-            print('cuda finished')
+        # if self.use_amp and args.cuda:
+        #     keep_batchnorm_fp32 = True if (self.opt_level == 'O2' or self.opt_level == 'O3') else None
+        #
+        #     # fix for current pytorch version with opt_level 'O1'
+        #     if self.opt_level == 'O1' and torch.__version__ < '1.3':
+        #         for module in self.model.modules():
+        #             if isinstance(module, torch.nn.modules.batchnorm._BatchNorm):
+        #                 # Hack to fix BN fprop without affine transformation
+        #                 if module.weight is None:
+        #                     module.weight = torch.nn.Parameter(
+        #                         torch.ones(module.running_var.shape, dtype=module.running_var.dtype,
+        #                                    device=module.running_var.device), requires_grad=False)
+        #                 if module.bias is None:
+        #                     module.bias = torch.nn.Parameter(
+        #                         torch.zeros(module.running_var.shape, dtype=module.running_var.dtype,
+        #                                     device=module.running_var.device), requires_grad=False)
+        #
+        #     # print(keep_batchnorm_fp32)
+        #     self.model, [self.optimizer, self.architect_optimizer] = amp.initialize(
+        #         self.model, [self.optimizer, self.architect_optimizer], opt_level=self.opt_level,
+        #         keep_batchnorm_fp32=keep_batchnorm_fp32, loss_scale="dynamic")
+        #
+        #     print('cuda finished')
 
 
         # Using data parallel
@@ -178,11 +178,11 @@ class Trainer(object):
             self.optimizer.zero_grad()
             output = self.model(image)
             loss = self.criterion(output, target)
-            if self.use_amp:
-                with amp.scale_loss(loss, self.optimizer) as scaled_loss:
-                    scaled_loss.backward()
-            else:
-                loss.backward()
+            # if self.use_amp:
+            #     with amp.scale_loss(loss, self.optimizer) as scaled_loss:
+            #         scaled_loss.backward()
+            # else:
+            loss.backward()
             self.optimizer.step()
 
             if epoch >= self.args.alpha_epoch:
@@ -194,11 +194,11 @@ class Trainer(object):
                 self.architect_optimizer.zero_grad()
                 output_search = self.model(image_search)
                 arch_loss = self.criterion(output_search, target_search)
-                if self.use_amp:
-                    with amp.scale_loss(arch_loss, self.architect_optimizer) as arch_scaled_loss:
-                        arch_scaled_loss.backward()
-                else:
-                    arch_loss.backward()
+                # if self.use_amp:
+                #     with amp.scale_loss(arch_loss, self.architect_optimizer) as arch_scaled_loss:
+                #         arch_scaled_loss.backward()
+                # else:
+                arch_loss.backward()
                 self.architect_optimizer.step()
 
             train_loss += loss.item()
@@ -265,6 +265,7 @@ class Trainer(object):
         print('[Epoch: %d, numImages: %5d]' % (epoch, i * self.args.batch_size + image.data.shape[0]))
         print("Acc:{}, Acc_class:{}, mIoU:{}, fwIoU: {}".format(Acc, Acc_class, mIoU, FWIoU))
         print('Loss: %.3f' % test_loss)
+
         new_pred = mIoU
         if new_pred > self.best_pred:
             is_best = True
