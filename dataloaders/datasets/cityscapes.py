@@ -40,10 +40,10 @@ class CityscapesSegmentation(data.Dataset):
         self.crop = self.args.crop_size
         if split.startswith('re'):
             self.images_base = os.path.join(self.root, 'leftImg8bit', self.split[2:])
-            self.annotations_base = os.path.join(self.root, 'gtFine', self.split[2:])
+            self.annotations_base = os.path.join(self.root, 'leftImg8bit', self.split[2:])
         else:
             self.images_base = os.path.join(self.root, 'leftImg8bit', self.split)
-            self.annotations_base = os.path.join(self.root, 'gtFine', self.split)
+            self.annotations_base = os.path.join(self.root, 'leftImg8bit', self.split)
 
         self.files[split] = self.recursive_glob(rootdir=self.images_base, suffix='.png')
 
@@ -74,7 +74,7 @@ class CityscapesSegmentation(data.Dataset):
         img_path = self.files[self.split][index].rstrip()
         lbl_path = os.path.join(self.annotations_base,
                                 img_path.split(os.sep)[-2],
-                                os.path.basename(img_path)[:-15] + 'gtFine_labelIds.png')
+                                os.path.basename(img_path)[:-15] + 'leftImg8bit.png')
 
         _img = Image.open(img_path).convert('RGB')
         _tmp = np.array(Image.open(lbl_path), dtype=np.uint8)
