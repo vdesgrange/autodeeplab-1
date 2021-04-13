@@ -8,6 +8,7 @@ class SegmentationLosses(object):
         self.ignore_index = ignore_index
         self.weight = weight
         self.size_average = size_average
+        self.batch_average = batch_average
         self.cuda = cuda
 
     def build_loss(self, mode='ce'):
