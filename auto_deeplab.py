@@ -247,6 +247,9 @@ class AutoDeeplab(nn.Module):
                 self.level_8.append(level8_new)
                 self.level_16.append(level16_new)
 
+                # Clean unused stem layer (overall list should never go beyond 3 elements, -2, -1 and new)
+                self.level_4.pop(0)
+
             elif layer == 2:
                 level4_new_1, level4_new_2 = self.cells[count](self.level_4[-2],
                                                                None,
@@ -285,6 +288,10 @@ class AutoDeeplab(nn.Module):
                 self.level_8.append(level8_new)
                 self.level_16.append(level16_new)
                 self.level_32.append(level32_new)
+
+                # Clean unused stem layer (overall list should never go beyond 3 elements, -2, -1 and new)
+                self.level_4.pop(0) # Back to 2 items
+                self.level_8.pop(0) # Back to 2 items
 
             elif layer == 3:
                 level4_new_1, level4_new_2 = self.cells[count](self.level_4[-2],
@@ -325,6 +332,11 @@ class AutoDeeplab(nn.Module):
                 self.level_8.append(level8_new)
                 self.level_16.append(level16_new)
                 self.level_32.append(level32_new)
+
+                # Clean unused stem layer (overall list should never go beyond 3 elements, -2, -1 and new)
+                self.level_4.pop(0)  # Back to 2 items
+                self.level_8.pop(0) # Back to 2 items
+                self.level_16.pop(0) # Back to 2 items
 
             else:
                 level4_new_1, level4_new_2 = self.cells[count](self.level_4[-2],
@@ -367,10 +379,16 @@ class AutoDeeplab(nn.Module):
                 self.level_16.append(level16_new)
                 self.level_32.append(level32_new)
 
-            self.level_4 = self.level_4[-2:]
-            self.level_8 = self.level_8[-2:]
-            self.level_16 = self.level_16[-2:]
-            self.level_32 = self.level_32[-2:]
+                # Clean unused stem layer (overall list should never go beyond 3 elements, -2, -1 and new)
+                self.level_4.pop(0)  # Back to 2 items
+                self.level_8.pop(0)  # Back to 2 items
+                self.level_16.pop(0)  # Back to 2 items
+                self.level_32.pop(0)  # Back to 2 items
+
+            # self.level_4 = self.level_4[-2:]
+            # self.level_8 = self.level_8[-2:]
+            # self.level_16 = self.level_16[-2:]
+            # self.level_32 = self.level_32[-2:]
 
         aspp_result_4 = self.aspp_4(self.level_4[-1])
         aspp_result_8 = self.aspp_8(self.level_8[-1])
