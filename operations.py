@@ -5,20 +5,20 @@ from modeling.sync_batchnorm.batchnorm import SynchronizedBatchNorm2d
 
 # TODO: NOW I DONT KNOW HOW TO USE ABN ON WINDOWS SYSTEM
 
-if platform.system() == 'Windows':
+# if platform.system() == 'Windows':
 
-    class ABN(nn.Module):
-        def __init__(self, C_out, affine=False):
-            super(ABN, self).__init__()
-            self.op = nn.Sequential(
-                nn.BatchNorm2d(C_out, affine=affine),
-                nn.ReLU(inplace=False)
-            )
+class ABN(nn.Module):
+    def __init__(self, C_out, affine=False):
+        super(ABN, self).__init__()
+        self.op = nn.Sequential(
+            nn.BatchNorm2d(C_out, affine=affine),
+            nn.ReLU(inplace=False)
+        )
 
-        def forward(self, x):
-            return self.op(x)
-else:
-    from modeling.modules import InPlaceABNSync as ABN
+    def forward(self, x):
+        return self.op(x)
+# else:
+#     from modeling.modules import InPlaceABNSync as ABN
 
 OPS = {
     'none': lambda C, stride, affine, use_ABN: Zero(stride),
