@@ -60,7 +60,7 @@ class Trainer(object):
         self.criterion = SegmentationLosses(weight=weight, cuda=args.cuda).build_loss(mode=args.loss_type)
 
         # Define network
-        model = AutoDeeplab (self.nclass, 12, self.criterion, self.args.filter_multiplier,
+        model = AutoDeeplab(self.nclass, 12, self.criterion, self.args.filter_multiplier,
                              self.args.block_multiplier, self.args.step)
         optimizer = torch.optim.SGD(
                 model.weight_parameters(),
@@ -146,7 +146,7 @@ class Trainer(object):
                 copy_state_dict(self.model.state_dict(), new_state_dict)
 
             else:
-                if torch.cuda.device_count() > 1 or args.load_parallel:
+                if len(self.args.gpu_ids) > 1 and (torch.cuda.device_count() > 1 or args.load_parallel):
                     # self.model.module.load_state_dict(checkpoint['state_dict'])
                     copy_state_dict(self.model.module.state_dict(), checkpoint['state_dict'])
                 else:
@@ -218,7 +218,7 @@ class Trainer(object):
         if self.args.no_val:
             # save checkpoint every epoch
             is_best = False
-            if torch.cuda.device_count() > 1:
+            if torch.cuda.device_count() > 1 and len(self.args.gpu_ids) > 1:
                 state_dict = self.model.module.state_dict()
             else:
                 state_dict = self.model.state_dict()

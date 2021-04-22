@@ -80,7 +80,7 @@ class OhemCELoss(nn.Module):
 
 
 def build_criterion(args):
-    print("=> Trying bulid {:}loss".format(args.criterion))
+    print("=> Trying build {:}loss".format(args.criterion))
     if args.criterion == 'Ohem':
         return OhemCELoss(thresh=args.thresh, n_min=args.n_min, cuda=True)
     elif args.criterion == 'crossentropy':
