@@ -30,7 +30,7 @@ def obtain_retrain_autodeeplab_args():
     parser.add_argument('--dist', type=bool, default=False)
     parser.add_argument('--autodeeplab', type=str, default='train')
     parser.add_argument('--block_multiplier', type=int, default=5)
-    parser.add_argument('--use-ABN', default=True, type=bool, help='whether use ABN')
+    parser.add_argument('--use_ABN', default=True, type=bool, help='whether use ABN')
     parser.add_argument('--affine', default=False, type=bool, help='whether use affine in BN')
     parser.add_argument('--port', default=6000, type=int)
     parser.add_argument('--max-iteration', default=1000000, type=bool)

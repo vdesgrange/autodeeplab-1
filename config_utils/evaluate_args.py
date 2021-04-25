@@ -20,6 +20,7 @@ def obtain_evaluate_args():
     parser.add_argument('--crop_size', type=int, default=513, help='image crop size')
     parser.add_argument('--resume', type=str, default=None, help='path to checkpoint to resume from')
     parser.add_argument('--workers', type=int, default=4, help='number of data loading workers')
+    parser.add_argument('--use_ABN', default=True, type=bool, help='whether use ABN')
 
     args = parser.parse_args()
     return args
