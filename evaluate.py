@@ -26,6 +26,7 @@ def main(start_epoch, epochs):
     model_fname = 'data/deeplab_{0}_{1}_v3_{2}_epoch%d.pth'.format(args.backbone, args.dataset, args.exp)
     if args.dataset == 'cityscapes':
         dataset = CityscapesSegmentation(args=args, root=Path.db_root_dir(args.dataset), split='reval')
+        args.num_classes = dataset.NUM_CLASSES
     else:
         return NotImplementedError
     if args.backbone == 'autodeeplab':
