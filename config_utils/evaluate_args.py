@@ -6,7 +6,7 @@ def obtain_evaluate_args():
     parser.add_argument('--train', action='store_true', default=False, help='training mode')
     parser.add_argument('--exp', type=str, default='bnlr7e-3', help='name of experiment')
     parser.add_argument('--gpu', type=int, default=0, help='test time gpu device id')
-    parser.add_argument('--backbone', type=str, default='resnet101', help='resnet101')
+    parser.add_argument('--backbone', type=str, default='autodeeplab', help='resnet101')
     parser.add_argument('--dataset', type=str, default='cityscapes', help='pascal or cityscapes')
     parser.add_argument('--groups', type=int, default=None, help='num of groups for group normalization')
     parser.add_argument('--epochs', type=int, default=30, help='num of training epochs')
@@ -21,6 +21,13 @@ def obtain_evaluate_args():
     parser.add_argument('--resume', type=str, default=None, help='path to checkpoint to resume from')
     parser.add_argument('--workers', type=int, default=4, help='number of data loading workers')
     parser.add_argument('--use_ABN', default=True, type=bool, help='whether use ABN')
-
+    parser.add_argument('--dist', type=bool, default=False)
+    parser.add_argument('--net_arch', default=None, type=str)
+    parser.add_argument('--cell_arch', default=None, type=str)
+    parser.add_argument('--filter_multiplier', type=int, default=32)
+    parser.add_argument('--block_multiplier', type=int, default=5)
+    parser.add_argument('--initial-fm', default=None, type=int)
+    parser.add_argument('--affine', default=False, type=bool, help='whether use affine in BN')
+    parser.add_argument('--eval_scales', default=1.0, type=float, help='image scale at evaluation')
     args = parser.parse_args()
     return args
