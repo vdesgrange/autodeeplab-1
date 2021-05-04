@@ -26,7 +26,7 @@ class Retrain_Autodeeplab(nn.Module):
         self.encoder = newModel(network_arch, cell_arch, args.num_classes, 12, args.filter_multiplier, BatchNorm=BatchNorm2d, args=args)
         self.aspp = ASPP(args.filter_multiplier * args.block_multiplier * filter_param_dict[network_path[-1]],
                          256, args.num_classes, conv=nn.Conv2d, norm=BatchNorm2d)
-        self.decoder = Decoder(args.num_classes, filter_multiplier=args.filter_multiplier * args.block_multiplier,
+        self.decoder = Decoder(args.num_classes, filter_multiplier=args.filter_multiplier * args.block_multiplier * filter_param_dict[network_path[2]],
                                args=args, last_level=network_path[-1])
 
     def forward(self, x):
