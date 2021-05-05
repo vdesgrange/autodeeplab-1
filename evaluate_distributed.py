@@ -124,6 +124,13 @@ def evaluate():
 
     warnings.filterwarnings('ignore')
     cfg = config_factory['resnet_cityscapes']
+
+    # === Custom parameters ===
+    cfg.datapth = '/export/scratch2/vlcd/data/public_data_set/cityscapes'
+    cfg.gpus = 4
+    cfg.max_epochs = 100
+    # =========================
+
     args = obtain_retrain_autodeeplab_args()
     if not args.local_rank == -1:
         torch.cuda.set_device(args.local_rank)
