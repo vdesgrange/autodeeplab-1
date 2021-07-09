@@ -34,7 +34,7 @@ def main(start_epoch, epochs):
     else:
         raise ValueError('Unknown backbone: {}'.format(args.backbone))
     if not args.train:
-        val_dataloader = DataLoader(dataset, batch_size=16, shuffle=False)
+        val_dataloader = DataLoader(dataset, batch_size=16, shuffle=False, drop_last=True)
         model = torch.nn.DataParallel(model).cuda()
         print("======================start evaluate=======================")
         for epoch in range(epochs):

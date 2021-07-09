@@ -125,12 +125,6 @@ def evaluate():
     warnings.filterwarnings('ignore')
     cfg = config_factory['resnet_cityscapes']
 
-    # === Custom parameters ===
-    cfg.datapth = '/export/scratch2/vlcd/data/public_data_set/cityscapes'
-    cfg.gpus = 4
-    cfg.max_epochs = 100
-    # =========================
-
     args = obtain_retrain_autodeeplab_args()
     if not args.local_rank == -1:
         torch.cuda.set_device(args.local_rank)
@@ -147,10 +141,10 @@ def evaluate():
         if dist.is_initialized() and dist.get_rank() != 0:
             log_level = logging.ERROR
         logging.basicConfig(level=log_level, format=FORMAT, stream=sys.stdout)
-    logger = logging.getLogger()
+    # logger = logging.getLogger()
 
     # model
-    logger.info('setup and restore model')
+    # logger.info('setup and restore model')
     net = Retrain_Autodeeplab(args)
 
     save_pth = osp.join(cfg.respth, 'model_final.pth')
@@ -164,10 +158,10 @@ def evaluate():
                                                   )
 
     # evaluator
-    logger.info('compute the mIOU')
+    # logger.info('compute the mIOU')
     evaluator = MscEval(cfg, args)
     mIOU = evaluator(net)
-    logger.info('mIOU is: {:.6f}'.format(mIOU))
+    # logger.info('mIOU is: {:.6f}'.format(mIOU))
 
 
 if __name__ == "__main__":
