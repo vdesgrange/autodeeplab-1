@@ -1,4 +1,5 @@
 import os
+import time
 import numpy as np
 import torch.nn as nn
 from tqdm import tqdm
@@ -320,11 +321,16 @@ def main():
     print(args)
     torch.manual_seed(args.seed)
     trainer = Trainer(args)
+    start = time.time()
     print('Starting Epoch:', trainer.args.start_epoch)
+    print('Starting time:', time.ctime(start))
     print('Total Epoches:', trainer.args.epochs)
+
     for epoch in range(trainer.args.start_epoch, trainer.args.epochs):
+        print('Epoch {:s} train. start time: {:s}'.format(epoch, time.ctime()))
         trainer.training(epoch)
         if not trainer.args.no_val and epoch % args.eval_interval == (args.eval_interval - 1):
+            print('Epoch {:s} valid. start time: {:s}'.format(epoch, time.ctime()))
             trainer.validation(epoch)
 
     trainer.writer.close()
