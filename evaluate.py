@@ -37,13 +37,13 @@ def main(start_epoch, epochs):
         val_dataloader = DataLoader(dataset, batch_size=16, shuffle=False, drop_last=True)
         model = torch.nn.DataParallel(model).cuda()
         print("======================start evaluate=======================")
-        for epoch in range(epochs):
+        for epoch in epochs:
             print("evaluate epoch {:}".format(epoch + start_epoch))
             checkpoint_name = model_fname % (epoch + start_epoch)
             print(checkpoint_name)
             checkpoint = torch.load(checkpoint_name)
             state_dict = {k[7:]: v for k, v in checkpoint['state_dict'].items() if 'tracked' not in k}
-            model.module.load_state_dict(state_dict)
+            model.module.load_state_dict(state_dict, strict=False)
             inter_meter = AverageMeter()
             union_meter = AverageMeter()
             for i, sample in enumerate(val_dataloader):
@@ -51,7 +51,7 @@ def main(start_epoch, epochs):
                 N, H, W = target.shape
                 total_outputs = torch.zeros((N, dataset.NUM_CLASSES, H, W)).cuda()
                 with torch.no_grad():
-                    for j, scale in enumerate(args.eval_scales):
+                    for j, scale in enumerate([args.eval_scales]):
                         new_scale = [int(H * scale), int(W * scale)]
                         inputs = F.upsample(inputs, new_scale, mode='bilinear', align_corners=True)
                         inputs = inputs.cuda()
@@ -79,6 +79,6 @@ def main(start_epoch, epochs):
 
 
 if __name__ == "__main__":
-    epochs = range(0, 100, 1)
-    state_epochs = 900
-    main(epochs=epochs, start_epoch=state_epochs)
+    epochs = range(0, 1, 1)  # range(0, 100, 1)
+    start_epochs = 100  # 900
+    main(start_epoch=start_epochs, epochs=epochs)

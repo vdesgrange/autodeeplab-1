@@ -9,9 +9,8 @@ class Config(object):
         self.aspp_global_feature = False
         # dataset
         self.n_classes = 19
-        self.datapth = '/dataset/Cityscapes_dataset'
-        # self.datapth = r'E:\BaiduNetdiskDownload\cityscapes'
-        self.gpus = 8
+        self.datapth = '/dataset/Cityscapes_dataset'  # to modify
+        self.gpus = 4  # 8, to modify
         self.crop_size = (769, 769)
         self.mean = (0.485, 0.456, 0.406)
         self.std = (0.229, 0.224, 0.225)
@@ -23,7 +22,7 @@ class Config(object):
         self.weight_decay = 5e-4
         self.lr_power = 0.9
         self.max_iter = 41000
-        self.max_epoch = 8000
+        self.max_epoch = 100  # 8000, to modify
         # training control
         self.scales = (0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0)
         self.flip = True

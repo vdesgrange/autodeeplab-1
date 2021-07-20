@@ -55,6 +55,7 @@ class MscEval(object):
 
     def __call__(self, net, criteria=None, multi_scale=True):
         # evaluate
+        print('Start CALL', flush=True)
         hist_size = (self.cfg.n_classes, self.cfg.n_classes)
         hist = np.zeros(hist_size, dtype=np.float32)
         if dist.is_initialized() and dist.get_rank() != 0:
@@ -65,11 +66,13 @@ class MscEval(object):
         if criteria is not None:
             loss_avg = []
         for i, (imgs, label) in diter:
+            print("Iteration n.{:} out of {:} :".format(i, len(diter)), flush=True)
             N, _, H, W = label.shape
             probs = torch.zeros((N, self.cfg.n_classes, H, W))
             probs.requires_grad = False
             eval_scale = self.cfg.eval_scales if multi_scale else self.cfg.eval_scale
             for sc in eval_scale:
+                print('Scale', flush=True)
                 new_hw = [int(H * sc), int(W * sc)]
                 with torch.no_grad():
                     im = F.interpolate(imgs, new_hw, mode='bilinear', align_corners=True)
@@ -124,6 +127,12 @@ def evaluate():
 
     warnings.filterwarnings('ignore')
     cfg = config_factory['resnet_cityscapes']
+
+    # # === Custom parameters ===
+    # cfg.datapth = ''  # add path
+    # cfg.gpus = 4
+    # cfg.max_epochs = 100
+    # # =========================
 
     args = obtain_retrain_autodeeplab_args()
     if not args.local_rank == -1:
