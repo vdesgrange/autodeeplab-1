@@ -327,10 +327,10 @@ def main():
     print('Total Epoches:', trainer.args.epochs)
 
     for epoch in range(trainer.args.start_epoch, trainer.args.epochs):
-        print('Epoch {:s} train. start time: {:s}'.format(epoch, time.ctime()))
+        print('Epoch {} train. start time: {}'.format(epoch, time.ctime()))
         trainer.training(epoch)
         if not trainer.args.no_val and epoch % args.eval_interval == (args.eval_interval - 1):
-            print('Epoch {:s} valid. start time: {:s}'.format(epoch, time.ctime()))
+            print('Epoch {} valid. start time: {}'.format(epoch, time.ctime()))
             trainer.validation(epoch)
 
     trainer.writer.close()
